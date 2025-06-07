@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reverse Words Algorithm Visualizer</title>
+    <style>
+        body {
+            font-family: 'Consolas', 'Monaco', monospace;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        input {
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            margin-right: 10px;
+            width: 300px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .phase {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border-left: 5px solid #ff6b6b;
+        }
+
+        .phase-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #ffdd59;
+        }
+
+        .char-array {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+
+        .char {
+            width: 35px;
+            height: 35px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .char.space {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: #ffdd59;
+        }
+
+        .char.active {
+            background: #ff6b6b;
+            border-color: #ff6b6b;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+        }
+
+        .char.word-boundary {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.3);
+        }
+
+        .char.pointer {
+            border-color: #ffdd59;
+            background: rgba(255, 221, 89, 0.3);
+        }
+
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .step-info {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .result {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #4ecdc4;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        @keyframes highlight {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .char.highlight {
+            animation: highlight 0.6s ease-in-out;
+        }
+
+        .leetcode-info {
+            text-align: center;
+            margin: -10px 0 30px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .leetcode-number {
+            background: linear-gradient(45deg, #ffa726, #ff7043);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(255, 167, 38, 0.3);
+        }
+
+        .leetcode-link {
+            color: #4ecdc4;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 8px 16px;
+            border: 2px solid #4ecdc4;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .leetcode-link:hover {
+            background: #4ecdc4;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.4);
+        }
+
+        .approach-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border-left: 5px solid #4ecdc4;
+        }
+
+        .approach-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .step-approach {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 3px solid #ffdd59;
+        }
+
+        .step-approach strong {
+            color: #4ecdc4;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .step-approach p {
+            margin: 0;
+            line-height: 1.6;
+            color: #e8e8e8;
+        }
+
+        .step-approach code {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #ffdd59;
+            font-size: 0.9em;
+        }
+
+        .code-section {
+            margin-top: 40px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .code-container {
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            overflow-x: auto;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+        }
+
+        .code-block {
+            margin: 0;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #d4d4d4;
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+        }
+
+        .code-block code {
+            display: block;
+            white-space: pre;
+            color: #d4d4d4;
+        }
+
+        /* Syntax highlighting */
+        .code-block .keyword {
+            color: #569cd6;
+        }
+
+        .code-block .string {
+            color: #ce9178;
+        }
+
+        .code-block .comment {
+            color: #6a9955;
+            font-style: italic;
+        }
+
+        .code-block .method {
+            color: #dcdcaa;
+        }
+
+        .code-block .type {
+            color: #4ec9b0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Reverse Words Algorithm</h1>
+        <div class="leetcode-info">
+            <span class="leetcode-number">LeetCode #151</span>
+            <a href="https://leetcode.com/problems/reverse-words-in-a-string/description/" target="_blank" class="leetcode-link">
+                Reverse Words in a String ↗
+            </a>
+        </div>
+        
+        <div class="approach-section">
+            <h2 style="color: #ffdd59; margin-bottom: 15px;">💡 My Approach</h2>
+            <div class="approach-content">
+                <div class="step-approach">
+                    <strong>Step 1: Reverse the entire array</strong>
+                    <p>First, reverse the whole string. This puts words in correct order but each word is backwards.</p>
+                </div>
+                
+                <div class="step-approach">
+                    <strong>Step 2: Reverse each word individually</strong>
+                    <p>Move <code>word_start</code> pointer to find first character (skip spaces by looping till we find char). Then move <code>end_word</code> pointer till we find the end of word. Call reverse function on this word range.</p>
+                </div>
+                
+                <div class="step-approach">
+                    <strong>Step 3: Cleanup spaces using two pointers</strong>
+                    <p>Use <code>read_ptr</code> and <code>write_ptr</code> starting at 0. Move read_ptr till we find character, then start swapping with write_ptr. After word ends, handle trailing spaces - loop till we find next character (next word). Add one space between words. Finally, substring till write_ptr position.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-section">
+            <input type="text" id="inputString" placeholder="Enter string (e.g., '  hello   world  ')" value="  hello   world  ">
+            <button onclick="startVisualization()">Visualize</button>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box" style="background: #ff6b6b; border-color: #ff6b6b;"></div>
+                <span>Active Characters</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: rgba(255, 255, 255, 0.3); border-color: #ffdd59;"></div>
+                <span>Spaces</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: rgba(78, 205, 196, 0.3); border-color: #4ecdc4;"></div>
+                <span>Word Boundaries</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: rgba(255, 221, 89, 0.3); border-color: #ffdd59;"></div>
+                <span>Pointers</span>
+            </div>
+        </div>
+
+        <div id="visualization"></div>
+
+        <div class="controls">
+            <button id="prevBtn" onclick="previousStep()" disabled>← Previous</button>
+            <button id="nextBtn" onclick="nextStep()">Next →</button>
+            <button onclick="autoPlay()" id="autoBtn">Auto Play</button>
+            <button onclick="reset()">Reset</button>
+        </div>
+
+        <div class="code-section">
+            <h2 style="color: #ffdd59; margin-bottom: 20px; text-align: center;">📝 Source Code</h2>
+            <div class="code-container">
+                <pre class="code-block"><code>class Solution {
+    public String reverseWords(String s) {
+        char[] chArray = s.toCharArray();
+
+        reverse(0, chArray.length - 1, chArray);
+        reverseWord(chArray);
+        String res = cleanSpaces(chArray);
+
+        return res;
+    }
+
+    private void reverse(int l, int r, char[] chArray) {
+        while (l < r) {
+            char temp = chArray[l];
+            chArray[l] = chArray[r];
+            chArray[r] = temp;
+            l++;
+            r--;
+        }
+    }
+
+    private void reverseWord(char[] chArray) {
+        int i = 0, j = 0;
+        int n = chArray.length;
+        while (i < n) {
+            //moves to beginning of the word ignoring spaces. Also once done it goes to the next word in next iteration
+            while (i < j || i < n && chArray[i] == ' ') {
+                i++;
+            }
+
+            //Moves to the end of the word. Also goes to the next word
+            while (j < i || j < n && chArray[j] != ' ') {
+                j++;
+            }
+
+            reverse(i, j - 1, chArray);
+        }
+    }
+
+    private String cleanSpaces(char[] chArray) {
+        int writePos = 0, readPos = 0;
+        int n = chArray.length;
+
+        while (readPos < n) {
+            while (readPos < n && chArray[readPos] == ' ')
+                readPos++; // skip spaces
+            while (readPos < n && chArray[readPos] != ' ')
+                chArray[writePos++] = chArray[readPos++]; // keep non spaces
+            while (readPos < n && chArray[readPos] == ' ')
+                readPos++; // skip spaces
+            if (readPos < n)
+                chArray[writePos++] = ' '; // keep only one space
+        }
+
+        return new String(chArray).substring(0, writePos);
+    }
+}</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        let steps = [];
+        let isAutoPlaying = false;
+        let autoInterval;
+
+        function startVisualization() {
+            const input = document.getElementById('inputString').value || "  hello   world  ";
+            generateSteps(input);
+            currentStep = 0;
+            renderStep();
+        }
+
+        function generateSteps(s) {
+            steps = [];
+            const chArray = s.split('');
+            
+            // Step 1: Initial state
+            steps.push({
+                phase: "Initial String",
+                array: [...chArray],
+                description: "Starting with the input string converted to character array",
+                activeIndices: [],
+                pointers: {}
+            });
+
+            // Phase 1: Reverse entire string
+            const reversed = [...chArray];
+            let l = 0, r = reversed.length - 1;
+            
+            while (l < r) {
+                steps.push({
+                    phase: "Phase 1: Reverse Entire String",
+                    array: [...reversed],
+                    description: `Swapping characters at positions ${l} and ${r}`,
+                    activeIndices: [l, r],
+                    pointers: {l: l, r: r}
+                });
+                
+                // Perform swap
+                let temp = reversed[l];
+                reversed[l] = reversed[r];
+                reversed[r] = temp;
+                
+                steps.push({
+                    phase: "Phase 1: Reverse Entire String",
+                    array: [...reversed],
+                    description: `Swapped! Moving pointers inward`,
+                    activeIndices: [l, r],
+                    pointers: {l: l, r: r}
+                });
+                
+                l++;
+                r--;
+            }
+
+            steps.push({
+                phase: "Phase 1: Complete",
+                array: [...reversed],
+                description: "Entire string reversed! Now each word is backwards.",
+                activeIndices: [],
+                pointers: {}
+            });
+
+            // Phase 2: Reverse each word
+            let i = 0, j = 0;
+            const n = reversed.length;
+            
+            while (i < n) {
+                let startI = i, startJ = j;
+                
+                // Skip spaces at beginning
+                while (i < j || (i < n && reversed[i] === ' ')) {
+                    i++;
+                }
+                
+                if (i >= n) break;
+                
+                // Find end of word
+                while (j < i || (j < n && reversed[j] !== ' ')) {
+                    j++;
+                }
+                
+                if (i < j - 1) {
+                    steps.push({
+                        phase: "Phase 2: Reverse Individual Words",
+                        array: [...reversed],
+                        description: `Found word from position ${i} to ${j-1}. Reversing it...`,
+                        activeIndices: [],
+                        pointers: {wordStart: i, wordEnd: j-1},
+                        wordBoundaries: [i, j-1]
+                    });
+                    
+                    // Reverse the word
+                    let wordL = i, wordR = j - 1;
+                    while (wordL < wordR) {
+                        steps.push({
+                            phase: "Phase 2: Reverse Individual Words",
+                            array: [...reversed],
+                            description: `Swapping characters at positions ${wordL} and ${wordR} within the word`,
+                            activeIndices: [wordL, wordR],
+                            pointers: {wordStart: i, wordEnd: j-1, l: wordL, r: wordR},
+                            wordBoundaries: [i, j-1]
+                        });
+                        
+                        let temp = reversed[wordL];
+                        reversed[wordL] = reversed[wordR];
+                        reversed[wordR] = temp;
+                        wordL++;
+                        wordR--;
+                    }
+                    
+                    steps.push({
+                        phase: "Phase 2: Reverse Individual Words",
+                        array: [...reversed],
+                        description: `Word reversed! Moving to next word.`,
+                        activeIndices: [],
+                        pointers: {},
+                        wordBoundaries: [i, j-1]
+                    });
+                }
+            }
+
+            steps.push({
+                phase: "Phase 2: Complete",
+                array: [...reversed],
+                description: "All words reversed! Now we need to clean up extra spaces.",
+                activeIndices: [],
+                pointers: {}
+            });
+
+            // Phase 3: Clean spaces
+            let writePos = 0, readPos = 0;
+            const cleaning = [...reversed];
+            
+            while (readPos < n) {
+                let initialReadPos = readPos;
+                
+                // Skip leading spaces
+                while (readPos < n && cleaning[readPos] === ' ') {
+                    readPos++;
+                }
+                
+                if (readPos >= n) break;
+                
+                steps.push({
+                    phase: "Phase 3: Clean Spaces",
+                    array: [...cleaning],
+                    description: `Skipped ${readPos - initialReadPos} spaces. Found word starting at position ${readPos}`,
+                    activeIndices: [],
+                    pointers: {read: readPos, write: writePos}
+                });
+                
+                // Copy word
+                let wordStart = readPos;
+                while (readPos < n && cleaning[readPos] !== ' ') {
+                    if (writePos !== readPos) {
+                        cleaning[writePos] = cleaning[readPos];
+                        steps.push({
+                            phase: "Phase 3: Clean Spaces",
+                            array: [...cleaning],
+                            description: `Copying character '${cleaning[readPos]}' from position ${readPos} to ${writePos}`,
+                            activeIndices: [readPos, writePos],
+                            pointers: {read: readPos, write: writePos}
+                        });
+                    }
+                    writePos++;
+                    readPos++;
+                }
+                
+                // Skip trailing spaces
+                while (readPos < n && cleaning[readPos] === ' ') {
+                    readPos++;
+                }
+                
+                // Add single space if not at end
+                if (readPos < n) {
+                    cleaning[writePos] = ' ';
+                    steps.push({
+                        phase: "Phase 3: Clean Spaces",
+                        array: [...cleaning],
+                        description: `Adding single space at position ${writePos}`,
+                        activeIndices: [writePos],
+                        pointers: {read: readPos, write: writePos}
+                    });
+                    writePos++;
+                }
+            }
+
+            // Final result
+            const result = cleaning.slice(0, writePos).join('');
+            steps.push({
+                phase: "Final Result",
+                array: cleaning.slice(0, writePos),
+                description: `Algorithm complete! Final result: "${result}"`,
+                activeIndices: [],
+                pointers: {},
+                result: result
+            });
+        }
+
+        function renderStep() {
+            if (steps.length === 0) return;
+            
+            const step = steps[currentStep];
+            const viz = document.getElementById('visualization');
+            
+            viz.innerHTML = `
+                <div class="phase">
+                    <div class="phase-title">${step.phase}</div>
+                    <div class="char-array">
+                        ${step.array.map((char, index) => {
+                            let classes = ['char'];
+                            if (char === ' ') classes.push('space');
+                            if (step.activeIndices && step.activeIndices.includes(index)) classes.push('active');
+                            if (step.wordBoundaries && index >= step.wordBoundaries[0] && index <= step.wordBoundaries[1]) classes.push('word-boundary');
+                            if (step.pointers) {
+                                Object.values(step.pointers).forEach(pos => {
+                                    if (pos === index) classes.push('pointer');
+                                });
+                            }
+                            return `<div class="${classes.join(' ')}">${char === ' ' ? '·' : char}</div>`;
+                        }).join('')}
+                    </div>
+                    <div class="step-info">${step.description}</div>
+                    ${step.pointers && Object.keys(step.pointers).length > 0 ? 
+                        `<div class="step-info">Pointers: ${Object.entries(step.pointers).map(([name, pos]) => `${name}=${pos}`).join(', ')}</div>` 
+                        : ''}
+                    ${step.result ? `<div class="result">Result: "${step.result}"</div>` : ''}
+                </div>
+            `;
+            
+            // Update button states
+            document.getElementById('prevBtn').disabled = currentStep === 0;
+            document.getElementById('nextBtn').disabled = currentStep === steps.length - 1;
+        }
+
+        function nextStep() {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                renderStep();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                renderStep();
+            }
+        }
+
+        function autoPlay() {
+            const btn = document.getElementById('autoBtn');
+            if (isAutoPlaying) {
+                clearInterval(autoInterval);
+                isAutoPlaying = false;
+                btn.textContent = 'Auto Play';
+            } else {
+                isAutoPlaying = true;
+                btn.textContent = 'Stop';
+                autoInterval = setInterval(() => {
+                    if (currentStep < steps.length - 1) {
+                        nextStep();
+                    } else {
+                        clearInterval(autoInterval);
+                        isAutoPlaying = false;
+                        btn.textContent = 'Auto Play';
+                    }
+                }, 1500);
+            }
+        }
+
+        function reset() {
+            currentStep = 0;
+            if (isAutoPlaying) {
+                clearInterval(autoInterval);
+                isAutoPlaying = false;
+                document.getElementById('autoBtn').textContent = 'Auto Play';
+            }
+            renderStep();
+        }
+
+        // Initialize with default example
+        startVisualization();
+    </script>
+</body>
+</html>

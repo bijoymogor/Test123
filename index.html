@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My LeetCode Study Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-width: 120px;
+        }
+
+        .stat-number {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #4ecdc4;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box, .filter-select {
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            outline: none;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .filter-select {
+            min-width: 150px;
+        }
+
+        .view-toggle {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 5px;
+            gap: 5px;
+        }
+
+        .view-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 20px;
+            background: transparent;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .techniques-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .technique-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .technique-section:hover {
+            transform: translateY(-3px);
+        }
+
+        .technique-header {
+            padding: 20px 25px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .technique-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #ffdd59;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .technique-icon {
+            font-size: 1.2em;
+        }
+
+        .technique-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9em;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .expand-icon {
+            transition: transform 0.3s ease;
+            font-size: 1.2em;
+        }
+
+        .technique-section.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .patterns-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .technique-section.expanded .patterns-container {
+            max-height: 2000px;
+        }
+
+        .pattern-section {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .pattern-header {
+            padding: 15px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease;
+        }
+
+        .pattern-header:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .pattern-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #96ceb4;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pattern-stats {
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+
+        .problems-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .pattern-section.expanded .problems-container {
+            max-height: 1500px;
+        }
+
+        .problems-list {
+            padding: 10px 25px 20px;
+            display: grid;
+            gap: 8px;
+        }
+
+        .problem-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 12px 15px;
+            border-left: 3px solid #4ecdc4;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .problem-card:hover {
+            background: rgba(0, 0, 0, 0.4);
+            transform: translateX(3px);
+            border-left-color: #ff6b6b;
+        }
+
+        .problem-info {
+            flex-grow: 1;
+        }
+
+        .problem-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+        }
+
+        .problem-number {
+            background: linear-gradient(45deg, #ffa726, #ff7043);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        .problem-title {
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .problem-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .problem-difficulty {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        .difficulty-easy {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
+
+        .difficulty-medium {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid #ffc107;
+        }
+
+        .difficulty-hard {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-solved {
+            background: #28a745;
+            box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+        }
+
+        .status-attempted {
+            background: #ffc107;
+            box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
+        }
+
+        .status-new {
+            background: #6c757d;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 15px;
+        }
+
+        .page-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover, .page-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .load-more-btn {
+            width: 100%;
+            padding: 15px;
+            margin: 20px 0;
+            border: none;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .load-more-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .compact-view .problems-list {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+
+        .compact-view .problem-card {
+            padding: 8px 12px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .techniques-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 My LeetCode Journey</h1>
+            <p>Master 2000+ problems with organized patterns and visualizations</p>
+        </div>
+
+        <div class="stats" id="statsContainer">
+            <div class="stat-card">
+                <div class="stat-number" id="totalSolved">0</div>
+                <div class="stat-label">Problems Solved</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalTechniques">6</div>
+                <div class="stat-label">Techniques</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalPatterns">0</div>
+                <div class="stat-label">Patterns</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalProblems">671</div>
+                <div class="stat-label">Total Problems</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <input type="text" class="search-box" placeholder="Search problems, patterns, or techniques..." id="searchBox">
+            <select class="filter-select" id="difficultyFilter">
+                <option value="">All Difficulties</option>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+            <select class="filter-select" id="statusFilter">
+                <option value="">All Status</option>
+                <option value="solved">Solved</option>
+                <option value="attempted">Attempted</option>
+                <option value="new">New</option>
+            </select>
+            <div class="view-toggle">
+                <button class="view-btn active" data-view="detailed">Detailed</button>
+                <button class="view-btn" data-view="compact">Compact</button>
+            </div>
+        </div>
+
+        <div class="techniques-container" id="techniquesContainer">
+            <!-- Techniques will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        // Data structure for techniques and patterns
+        const techniquesData = {
+            'two-pointers': {
+                title: 'Two Pointers',
+                icon: '👈👉',
+                total: 102,
+                solved: 1,
+                patterns: {
+                    'running-both-ends': {
+                        title: 'Running from both ends of an array',
+                        problems: [
+                            { id: 151, title: 'Reverse Words in a String', difficulty: 'medium', status: 'solved', url: 'Two_Pointers/ReverseWordsInAString.html' },
+                            { id: 11, title: 'Container With Most Water', difficulty: 'medium', status: 'new' },
+                            { id: 15, title: '3Sum', difficulty: 'medium', status: 'new' },
+                            { id: 16, title: '3Sum Closest', difficulty: 'medium', status: 'new' },
+                            { id: 18, title: '4Sum', difficulty: 'medium', status: 'new' }
+                        ]
+                    },
+                    'slow-fast': {
+                        title: 'Slow & Fast Pointers',
+                        problems: [
+                            { id: 141, title: 'Linked List Cycle', difficulty: 'easy', status: 'new' },
+                            { id: 142, title: 'Linked List Cycle II', difficulty: 'medium', status: 'new' },
+                            { id: 287, title: 'Find the Duplicate Number', difficulty: 'medium', status: 'new' },
+                            { id: 876, title: 'Middle of the Linked List', difficulty: 'easy', status: 'new' }
+                        ]
+                    },
+                    'merging-arrays': {
+                        title: 'Running from beginning of 2 arrays / Merging 2 arrays',
+                        problems: [
+                            { id: 88, title: 'Merge Sorted Array', difficulty: 'easy', status: 'new' },
+                            { id: 977, title: 'Squares of a Sorted Array', difficulty: 'easy', status: 'new' },
+                            { id: 986, title: 'Interval List Intersections', difficulty: 'medium', status: 'new' }
+                        ]
+                    }
+                }
+            },
+            'linked-list': {
+                title: 'Linked List',
+                icon: '🔗',
+                total: 50,
+                solved: 0,
+                patterns: {
+                    'basic-operations': {
+                        title: 'Basic Operations',
+                        problems: [
+                            { id: 206, title: 'Reverse Linked List', difficulty: 'easy', status: 'new' },
+                            { id: 21, title: 'Merge Two Sorted Lists', difficulty: 'easy', status: 'new' },
+                            { id: 83, title: 'Remove Duplicates from Sorted List', difficulty: 'easy', status: 'new' }
+                        ]
+                    },
+                    'advanced-manipulation': {
+                        title: 'Advanced Manipulation',
+                        problems: [
+                            { id: 92, title: 'Reverse Linked List II', difficulty: 'medium', status: 'new' },
+                            { id: 25, title: 'Reverse Nodes in k-Group', difficulty: 'hard', status: 'new' },
+                            { id: 61, title: 'Rotate List', difficulty: 'medium', status: 'new' }
+                        ]
+                    }
+                }
+            },
+            'sliding-window': {
+                title: 'Sliding Window',
+                icon: '🪟',
+                total: 55,
+                solved: 0,
+                patterns: {
+                    'fixed-size': {
+                        title: 'Fixed Size Window',
+                        problems: [
+                            { id: 209, title: 'Minimum Size Subarray Sum', difficulty: 'medium', status: 'new' },
+                            { id: 438, title: 'Find All Anagrams in a String', difficulty: 'medium', status: 'new' }
+                        ]
+                    },
+                    'variable-size': {
+                        title: 'Variable Size Window',
+                        problems: [
+                            { id: 3, title: 'Longest Substring Without Repeating Characters', difficulty: 'medium', status: 'new' },
+                            { id: 76, title: 'Minimum Window Substring', difficulty: 'hard', status: 'new' }
+                        ]
+                    }
+                }
+            },
+            'trees': {
+                title: 'Trees',
+                icon: '🌳',
+                total: 78,
+                solved: 0,
+                patterns: {
+                    'traversal': {
+                        title: 'Tree Traversal',
+                        problems: [
+                            { id: 94, title: 'Binary Tree Inorder Traversal', difficulty: 'medium', status: 'new' },
+                            { id: 144, title: 'Binary Tree Preorder Traversal', difficulty: 'medium', status: 'new' }
+                        ]
+                    },
+                    'depth': {
+                        title: 'Depth & Height',
+                        problems: [
+                            { id: 104, title: 'Maximum Depth of Binary Tree', difficulty: 'easy', status: 'new' },
+                            { id: 110, title: 'Balanced Binary Tree', difficulty: 'easy', status: 'new' }
+                        ]
+                    }
+                }
+            },
+            'dynamic-programming': {
+                title: 'Dynamic Programming',
+                icon: '📊',
+                total: 195,
+                solved: 0,
+                patterns: {
+                    'linear-dp': {
+                        title: 'Linear DP',
+                        problems: [
+                            { id: 70, title: 'Climbing Stairs', difficulty: 'easy', status: 'new' },
+                            { id: 198, title: 'House Robber', difficulty: 'medium', status: 'new' }
+                        ]
+                    },
+                    'grid-dp': {
+                        title: 'Grid DP',
+                        problems: [
+                            { id: 62, title: 'Unique Paths', difficulty: 'medium', status: 'new' },
+                            { id: 64, title: 'Minimum Path Sum', difficulty: 'medium', status: 'new' }
+                        ]
+                    }
+                }
+            },
+            'graph': {
+                title: 'Graph',
+                icon: '🕸️',
+                total: 96,
+                solved: 0,
+                patterns: {
+                    'traversal': {
+                        title: 'Graph Traversal',
+                        problems: [
+                            { id: 200, title: 'Number of Islands', difficulty: 'medium', status: 'new' },
+                            { id: 695, title: 'Max Area of Island', difficulty: 'medium', status: 'new' }
+                        ]
+                    },
+                    'shortest-path': {
+                        title: 'Shortest Path',
+                        problems: [
+                            { id: 743, title: 'Network Delay Time', difficulty: 'medium', status: 'new' },
+                            { id: 787, title: 'Cheapest Flights Within K Stops', difficulty: 'medium', status: 'new' }
+                        ]
+                    }
+                }
+            }
+        };
+
+        let currentView = 'detailed';
+        let expandedTechniques = new Set();
+        let expandedPatterns = new Set();
+
+        function initializeDashboard() {
+            updateStats();
+            renderTechniques();
+            setupEventListeners();
+        }
+
+        function updateStats() {
+            let totalSolved = 0;
+            let totalPatterns = 0;
+            
+            Object.values(techniquesData).forEach(technique => {
+                totalSolved += technique.solved;
+                totalPatterns += Object.keys(technique.patterns).length;
+            });
+
+            document.getElementById('totalSolved').textContent = totalSolved;
+            document.getElementById('totalPatterns').textContent = totalPatterns;
+        }
+
+        function renderTechniques() {
+            const container = document.getElementById('techniquesContainer');
+            container.innerHTML = '';
+
+            Object.entries(techniquesData).forEach(([techniqueId, technique]) => {
+                const techniqueElement = createTechniqueElement(techniqueId, technique);
+                container.appendChild(techniqueElement);
+            });
+        }
+
+        function createTechniqueElement(techniqueId, technique) {
+            const isExpanded = expandedTechniques.has(techniqueId);
+            
+            const techniqueDiv = document.createElement('div');
+            techniqueDiv.className = `technique-section ${isExpanded ? 'expanded' : ''}`;
+            techniqueDiv.dataset.technique = techniqueId;
+
+            const solvedCount = technique.solved;
+            const totalCount = technique.total;
+            const solvedPercentage = Math.round((solvedCount / totalCount) * 100);
+
+            techniqueDiv.innerHTML = `
+                <div class="technique-header" onclick="toggleTechnique('${techniqueId}')">
+                    <div class="technique-title">
+                        <span class="technique-icon">${technique.icon}</span>
+                        ${technique.title}
+                    </div>
+                    <div class="technique-stats">
+                        <div class="stat-item">
+                            <span>✅ ${solvedCount}/${totalCount}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>${solvedPercentage}%</span>
+                        </div>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                </div>
+                <div class="patterns-container">
+                    ${Object.entries(technique.patterns).map(([patternId, pattern]) => 
+                        createPatternElement(techniqueId, patternId, pattern)
+                    ).join('')}
+                </div>
+            `;
+
+            return techniqueDiv;
+        }
+
+        function createPatternElement(techniqueId, patternId, pattern) {
+            const patternKey = `${techniqueId}-${patternId}`;
+            const isExpanded = expandedPatterns.has(patternKey);
+            const solvedCount = pattern.problems.filter(p => p.status === 'solved').length;
+            const totalCount = pattern.problems.length;
+
+            return `
+                <div class="pattern-section ${isExpanded ? 'expanded' : ''}" data-pattern="${patternKey}">
+                    <div class="pattern-header" onclick="togglePattern('${patternKey}')">
+                        <div class="pattern-title">
+                            <span>📌</span>
+                            ${pattern.title}
+                        </div>
+                        <div class="pattern-stats">
+                            ${solvedCount}/${totalCount} • <span class="expand-icon">▼</span>
+                        </div>
+                    </div>
+                    <div class="problems-container">
+                        <div class="problems-list">
+                            ${pattern.problems.map(problem => createProblemElement(problem)).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createProblemElement(problem) {
+            return `
+                <div class="problem-card" onclick="loadProblem(${problem.id}, '${problem.url || ''}')" data-difficulty="${problem.difficulty}" data-status="${problem.status}">
+                    <div class="problem-info">
+                        <div class="problem-header">
+                            <span class="problem-number">#${problem.id}</span>
+                            <span class="problem-title">${problem.title}</span>
+                        </div>
+                    </div>
+                    <div class="problem-meta">
+                        <span class="problem-difficulty difficulty-${problem.difficulty}">${problem.difficulty}</span>
+                        <div class="status-indicator status-${problem.status}"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleTechnique(techniqueId) {
+            if (expandedTechniques.has(techniqueId)) {
+                // If clicking on already expanded technique, just close it
+                expandedTechniques.delete(techniqueId);
+                const element = document.querySelector(`[data-technique="${techniqueId}"]`);
+                element.classList.remove('expanded');
+                
+                // Close all patterns within this technique
+                const techniquePatterns = Array.from(expandedPatterns).filter(pattern => pattern.startsWith(techniqueId + '-'));
+                techniquePatterns.forEach(pattern => {
+                    expandedPatterns.delete(pattern);
+                    const patternElement = document.querySelector(`[data-pattern="${pattern}"]`);
+                    if (patternElement) {
+                        patternElement.classList.remove('expanded');
+                    }
+                });
+            } else {
+                // Close all other expanded techniques first
+                expandedTechniques.forEach(expandedId => {
+                    if (expandedId !== techniqueId) {
+                        const expandedElement = document.querySelector(`[data-technique="${expandedId}"]`);
+                        if (expandedElement) {
+                            expandedElement.classList.remove('expanded');
+                        }
+                    }
+                });
+                
+                // Close all patterns from other techniques
+                const otherTechniquePatterns = Array.from(expandedPatterns).filter(pattern => !pattern.startsWith(techniqueId + '-'));
+                otherTechniquePatterns.forEach(pattern => {
+                    const patternElement = document.querySelector(`[data-pattern="${pattern}"]`);
+                    if (patternElement) {
+                        patternElement.classList.remove('expanded');
+                    }
+                });
+                expandedPatterns = new Set(Array.from(expandedPatterns).filter(pattern => pattern.startsWith(techniqueId + '-')));
+                
+                // Clear the techniques set and add only the current one
+                expandedTechniques.clear();
+                expandedTechniques.add(techniqueId);
+                
+                // Expand the current technique
+                const element = document.querySelector(`[data-technique="${techniqueId}"]`);
+                element.classList.add('expanded');
+            }
+        }
+
+        function togglePattern(patternKey) {
+            const techniqueId = patternKey.split('-')[0];
+            
+            if (expandedPatterns.has(patternKey)) {
+                // If clicking on already expanded pattern, just close it
+                expandedPatterns.delete(patternKey);
+                const element = document.querySelector(`[data-pattern="${patternKey}"]`);
+                element.classList.remove('expanded');
+            } else {
+                // Close all other patterns within the same technique
+                const sameTechniquePatterns = Array.from(expandedPatterns).filter(pattern => 
+                    pattern.startsWith(techniqueId + '-') && pattern !== patternKey
+                );
+                sameTechniquePatterns.forEach(pattern => {
+                    expandedPatterns.delete(pattern);
+                    const patternElement = document.querySelector(`[data-pattern="${pattern}"]`);
+                    if (patternElement) {
+                        patternElement.classList.remove('expanded');
+                    }
+                });
+                
+                // Expand the current pattern
+                expandedPatterns.add(patternKey);
+                const element = document.querySelector(`[data-pattern="${patternKey}"]`);
+                element.classList.add('expanded');
+            }
+        }
+
+        function loadProblem(problemId, url) {
+            if (url) {
+                window.location.href = url;
+            } else {
+                alert(`Problem #${problemId} visualization coming soon!`);
+            }
+        }
+
+        function setupEventListeners() {
+            // Search functionality
+            document.getElementById('searchBox').addEventListener('input', (e) => {
+                filterContent(e.target.value.toLowerCase());
+            });
+
+            // Filter functionality
+            document.getElementById('difficultyFilter').addEventListener('change', applyFilters);
+            document.getElementById('statusFilter').addEventListener('change', applyFilters);
+
+            // View toggle
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentView = e.target.dataset.view;
+                    document.body.className = currentView === 'compact' ? 'compact-view' : '';
+                });
+            });
+        }
+
+        function filterContent(searchTerm) {
+            const techniques = document.querySelectorAll('.technique-section');
+            
+            techniques.forEach(technique => {
+                let hasVisibleContent = false;
+                const patterns = technique.querySelectorAll('.pattern-section');
+                
+                patterns.forEach(pattern => {
+                    let hasVisibleProblems = false;
+                    const problems = pattern.querySelectorAll('.problem-card');
+                    
+                    problems.forEach(problem => {
+                        const title = problem.querySelector('.problem-title').textContent.toLowerCase();
+                        const number = problem.querySelector('.problem-number').textContent.toLowerCase();
+                        
+                        const isVisible = title.includes(searchTerm) || number.includes(searchTerm) || searchTerm === '';
+                        problem.style.display = isVisible ? 'flex' : 'none';
+                        
+                        if (isVisible) hasVisibleProblems = true;
+                    });
+                    
+                    pattern.style.display = hasVisibleProblems ? 'block' : 'none';
+                    if (hasVisibleProblems) hasVisibleContent = true;
+                });
+                
+                technique.style.display = hasVisibleContent ? 'block' : 'none';
+            });
+        }
+
+        function applyFilters() {
+            const difficultyFilter = document.getElementById('difficultyFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            const problems = document.querySelectorAll('.problem-card');
+            
+            problems.forEach(problem => {
+                const difficulty = problem.dataset.difficulty;
+                const status = problem.dataset.status;
+                
+                const matchesDifficulty = !difficultyFilter || difficulty === difficultyFilter;
+                const matchesStatus = !statusFilter || status === statusFilter;
+                
+                problem.style.display = (matchesDifficulty && matchesStatus) ? 'flex' : 'none';
+            });
+        }
+
+        // Initialize the dashboard
+        initializeDashboard();
+
+        // Welcome message
+        setTimeout(() => {
+            console.log('🎉 Welcome to your Scalable LeetCode Study Dashboard!');
+            console.log('📊 Ready to handle 2000+ problems across multiple patterns');
+            console.log('💡 Click on technique headers to expand and explore patterns');
+        }, 1000);
+    </script>
+</body>
+</html>
