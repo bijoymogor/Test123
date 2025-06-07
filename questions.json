@@ -1,0 +1,304 @@
+{
+    "two-pointers": {
+        "title": "Two Pointers",
+        "icon": "👈👉",
+        "total": 102,
+        "patterns": {
+            "running-both-ends": {
+                "title": "Running from both ends of an array",
+                "problems": [
+                    {
+                        "id": 151,
+                        "title": "Reverse Words in a String",
+                        "difficulty": "medium",
+                        "status": "solved",
+                        "url": "Two_Pointers/ReverseWordsInAString.html"
+                    },
+                    {
+                        "id": 557,
+                        "title": "Reverse Words in a String III",
+                        "difficulty": "easy",
+                        "status": "solved",
+                        "url": "Two_Pointers/ReverseWordsinaStringIII.html"
+                    },
+                    {
+                        "id": 948,
+                        "title": "Bag of Tokens",
+                        "difficulty": "medium",
+                        "status": "solved",
+                        "url": "Two_Pointers/ReverseWordsinaStringIII.html"
+                    }
+                ]
+            },
+            "slow-fast": {
+                "title": "Slow & Fast Pointers",
+                "problems": [
+                    {
+                        "id": 141,
+                        "title": "Linked List Cycle",
+                        "difficulty": "easy",
+                        "status": "new"
+                    },
+                    {
+                        "id": 142,
+                        "title": "Linked List Cycle II",
+                        "difficulty": "medium",
+                        "status": "new"
+                    },
+                    {
+                        "id": 287,
+                        "title": "Find the Duplicate Number",
+                        "difficulty": "medium",
+                        "status": "new"
+                    },
+                    {
+                        "id": 876,
+                        "title": "Middle of the Linked List",
+                        "difficulty": "easy",
+                        "status": "new"
+                    }
+                ]
+            },
+            "merging-arrays": {
+                "title": "Running from beginning of 2 arrays / Merging 2 arrays",
+                "problems": [
+                    {
+                        "id": 88,
+                        "title": "Merge Sorted Array",
+                        "difficulty": "easy",
+                        "status": "new"
+                    },
+                    {
+                        "id": 977,
+                        "title": "Squares of a Sorted Array",
+                        "difficulty": "easy",
+                        "status": "new"
+                    },
+                    {
+                        "id": 986,
+                        "title": "Interval List Intersections",
+                        "difficulty": "medium",
+                        "status": "new"
+                    }
+                ]
+            }
+        }
+    },
+    "linked-list": {
+        "title": "Linked List",
+        "icon": "🔗",
+        "total": 50,
+        "patterns": {
+            "basic-operations": {
+                "title": "Basic Operations",
+                "problems": [
+                    {
+                        "id": 206,
+                        "title": "Reverse Linked List",
+                        "difficulty": "easy",
+                        "status": "new"
+                    },
+                    {
+                        "id": 21,
+                        "title": "Merge Two Sorted Lists",
+                        "difficulty": "easy",
+                        "status": "new"
+                    },
+                    {
+                        "id": 83,
+                        "title": "Remove Duplicates from Sorted List",
+                        "difficulty": "easy",
+                        "status": "new"
+                    }
+                ]
+            },
+            "advanced-manipulation": {
+                "title": "Advanced Manipulation",
+                "problems": [
+                    {
+                        "id": 92,
+                        "title": "Reverse Linked List II",
+                        "difficulty": "medium",
+                        "status": "new"
+                    },
+                    {
+                        "id": 25,
+                        "title": "Reverse Nodes in k-Group",
+                        "difficulty": "hard",
+                        "status": "new"
+                    },
+                    {
+                        "id": 61,
+                        "title": "Rotate List",
+                        "difficulty": "medium",
+                        "status": "new"
+                    }
+                ]
+            }
+        }
+    },
+    "sliding-window": {
+        "title": "Sliding Window",
+        "icon": "🪟",
+        "total": 55,
+        "patterns": {
+            "fixed-size": {
+                "title": "Fixed Size Window",
+                "problems": [
+                    {
+                        "id": 209,
+                        "title": "Minimum Size Subarray Sum",
+                        "difficulty": "medium",
+                        "status": "new"
+                    },
+                    {
+                        "id": 438,
+                        "title": "Find All Anagrams in a String",
+                        "difficulty": "medium",
+                        "status": "new"
+                    }
+                ]
+            },
+            "variable-size": {
+                "title": "Variable Size Window",
+                "problems": [
+                    {
+                        "id": 3,
+                        "title": "Longest Substring Without Repeating Characters",
+                        "difficulty": "medium",
+                        "status": "new"
+                    },
+                    {
+                        "id": 76,
+                        "title": "Minimum Window Substring",
+                        "difficulty": "hard",
+                        "status": "new"
+                    }
+                ]
+            }
+        }
+    },
+    "trees": {
+        "title": "Trees",
+        "icon": "🌳",
+        "total": 78,
+        "patterns": {
+            "traversal": {
+                "title": "Tree Traversal",
+                "problems": [
+                    {
+                        "id": 94,
+                        "title": "Binary Tree Inorder Traversal",
+                        "difficulty": "medium",
+                        "status": "new"
+                    },
+                    {
+                        "id": 144,
+                        "title": "Binary Tree Preorder Traversal",
+                        "difficulty": "medium",
+                        "status": "new"
+                    }
+                ]
+            },
+            "depth": {
+                "title": "Depth & Height",
+                "problems": [
+                    {
+                        "id": 104,
+                        "title": "Maximum Depth of Binary Tree",
+                        "difficulty": "easy",
+                        "status": "new"
+                    },
+                    {
+                        "id": 110,
+                        "title": "Balanced Binary Tree",
+                        "difficulty": "easy",
+                        "status": "new"
+                    }
+                ]
+            }
+        }
+    },
+    "dynamic-programming": {
+        "title": "Dynamic Programming",
+        "icon": "📊",
+        "total": 195,
+        "patterns": {
+            "linear-dp": {
+                "title": "Linear DP",
+                "problems": [
+                    {
+                        "id": 70,
+                        "title": "Climbing Stairs",
+                        "difficulty": "easy",
+                        "status": "new"
+                    },
+                    {
+                        "id": 198,
+                        "title": "House Robber",
+                        "difficulty": "medium",
+                        "status": "new"
+                    }
+                ]
+            },
+            "grid-dp": {
+                "title": "Grid DP",
+                "problems": [
+                    {
+                        "id": 62,
+                        "title": "Unique Paths",
+                        "difficulty": "medium",
+                        "status": "new"
+                    },
+                    {
+                        "id": 64,
+                        "title": "Minimum Path Sum",
+                        "difficulty": "medium",
+                        "status": "new"
+                    }
+                ]
+            }
+        }
+    },
+    "graph": {
+        "title": "Graph",
+        "icon": "🕸️",
+        "total": 96,
+        "patterns": {
+            "traversal": {
+                "title": "Graph Traversal",
+                "problems": [
+                    {
+                        "id": 200,
+                        "title": "Number of Islands",
+                        "difficulty": "medium",
+                        "status": "new"
+                    },
+                    {
+                        "id": 695,
+                        "title": "Max Area of Island",
+                        "difficulty": "medium",
+                        "status": "new"
+                    }
+                ]
+            },
+            "shortest-path": {
+                "title": "Shortest Path",
+                "problems": [
+                    {
+                        "id": 743,
+                        "title": "Network Delay Time",
+                        "difficulty": "medium",
+                        "status": "new"
+                    },
+                    {
+                        "id": 787,
+                        "title": "Cheapest Flights Within K Stops",
+                        "difficulty": "medium",
+                        "status": "new"
+                    }
+                ]
+            }
+        }
+    }
+}

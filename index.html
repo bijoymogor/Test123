@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,7 +33,7 @@
         .header h1 {
             font-size: 3em;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
             background-size: 400% 400%;
             -webkit-background-clip: text;
@@ -42,8 +43,15 @@
         }
 
         @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
         }
 
         .header p {
@@ -90,7 +98,8 @@
             align-items: center;
         }
 
-        .search-box, .filter-select {
+        .search-box,
+        .filter-select {
             padding: 12px 20px;
             font-size: 16px;
             border: none;
@@ -371,7 +380,8 @@
             transition: all 0.3s ease;
         }
 
-        .page-btn:hover, .page-btn.active {
+        .page-btn:hover,
+        .page-btn.active {
             background: rgba(255, 255, 255, 0.2);
         }
 
@@ -413,12 +423,12 @@
             .header h1 {
                 font-size: 2em;
             }
-            
+
             .techniques-container {
                 grid-template-columns: 1fr;
                 gap: 20px;
             }
-            
+
             .controls {
                 flex-direction: column;
                 gap: 15px;
@@ -430,6 +440,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -457,7 +468,8 @@
         </div>
 
         <div class="controls">
-            <input type="text" class="search-box" placeholder="Search problems, patterns, or techniques..." id="searchBox">
+            <input type="text" class="search-box" placeholder="Search problems, patterns, or techniques..."
+                id="searchBox">
             <select class="filter-select" id="difficultyFilter">
                 <option value="">All Difficulties</option>
                 <option value="easy">Easy</option>
@@ -483,175 +495,94 @@
 
     <script>
         // Data structure for techniques and patterns
-        const techniquesData = {
-            'two-pointers': {
-                title: 'Two Pointers',
-                icon: '👈👉',
-                total: 102,
-                solved: 1,
-                patterns: {
-                    'running-both-ends': {
-                        title: 'Running from both ends of an array',
-                        problems: [
-                            { id: 151, title: 'Reverse Words in a String', difficulty: 'medium', status: 'solved', url: 'Two_Pointers/ReverseWordsInAString.html' },
-                            { id: 557, title: 'Reverse Words in a String III', difficulty: 'easy', status: 'solved', url: 'Two_Pointers/ReverseWordsinaStringIII.html' },
-                            { id: 11, title: 'Container With Most Water', difficulty: 'medium', status: 'new' },
-                        ]
-                    },
-                    'slow-fast': {
-                        title: 'Slow & Fast Pointers',
-                        problems: [
-                            { id: 141, title: 'Linked List Cycle', difficulty: 'easy', status: 'new' },
-                            { id: 142, title: 'Linked List Cycle II', difficulty: 'medium', status: 'new' },
-                            { id: 287, title: 'Find the Duplicate Number', difficulty: 'medium', status: 'new' },
-                            { id: 876, title: 'Middle of the Linked List', difficulty: 'easy', status: 'new' }
-                        ]
-                    },
-                    'merging-arrays': {
-                        title: 'Running from beginning of 2 arrays / Merging 2 arrays',
-                        problems: [
-                            { id: 88, title: 'Merge Sorted Array', difficulty: 'easy', status: 'new' },
-                            { id: 977, title: 'Squares of a Sorted Array', difficulty: 'easy', status: 'new' },
-                            { id: 986, title: 'Interval List Intersections', difficulty: 'medium', status: 'new' }
-                        ]
-                    }
-                }
-            },
-            'linked-list': {
-                title: 'Linked List',
-                icon: '🔗',
-                total: 50,
-                solved: 0,
-                patterns: {
-                    'basic-operations': {
-                        title: 'Basic Operations',
-                        problems: [
-                            { id: 206, title: 'Reverse Linked List', difficulty: 'easy', status: 'new' },
-                            { id: 21, title: 'Merge Two Sorted Lists', difficulty: 'easy', status: 'new' },
-                            { id: 83, title: 'Remove Duplicates from Sorted List', difficulty: 'easy', status: 'new' }
-                        ]
-                    },
-                    'advanced-manipulation': {
-                        title: 'Advanced Manipulation',
-                        problems: [
-                            { id: 92, title: 'Reverse Linked List II', difficulty: 'medium', status: 'new' },
-                            { id: 25, title: 'Reverse Nodes in k-Group', difficulty: 'hard', status: 'new' },
-                            { id: 61, title: 'Rotate List', difficulty: 'medium', status: 'new' }
-                        ]
-                    }
-                }
-            },
-            'sliding-window': {
-                title: 'Sliding Window',
-                icon: '🪟',
-                total: 55,
-                solved: 0,
-                patterns: {
-                    'fixed-size': {
-                        title: 'Fixed Size Window',
-                        problems: [
-                            { id: 209, title: 'Minimum Size Subarray Sum', difficulty: 'medium', status: 'new' },
-                            { id: 438, title: 'Find All Anagrams in a String', difficulty: 'medium', status: 'new' }
-                        ]
-                    },
-                    'variable-size': {
-                        title: 'Variable Size Window',
-                        problems: [
-                            { id: 3, title: 'Longest Substring Without Repeating Characters', difficulty: 'medium', status: 'new' },
-                            { id: 76, title: 'Minimum Window Substring', difficulty: 'hard', status: 'new' }
-                        ]
-                    }
-                }
-            },
-            'trees': {
-                title: 'Trees',
-                icon: '🌳',
-                total: 78,
-                solved: 0,
-                patterns: {
-                    'traversal': {
-                        title: 'Tree Traversal',
-                        problems: [
-                            { id: 94, title: 'Binary Tree Inorder Traversal', difficulty: 'medium', status: 'new' },
-                            { id: 144, title: 'Binary Tree Preorder Traversal', difficulty: 'medium', status: 'new' }
-                        ]
-                    },
-                    'depth': {
-                        title: 'Depth & Height',
-                        problems: [
-                            { id: 104, title: 'Maximum Depth of Binary Tree', difficulty: 'easy', status: 'new' },
-                            { id: 110, title: 'Balanced Binary Tree', difficulty: 'easy', status: 'new' }
-                        ]
-                    }
-                }
-            },
-            'dynamic-programming': {
-                title: 'Dynamic Programming',
-                icon: '📊',
-                total: 195,
-                solved: 0,
-                patterns: {
-                    'linear-dp': {
-                        title: 'Linear DP',
-                        problems: [
-                            { id: 70, title: 'Climbing Stairs', difficulty: 'easy', status: 'new' },
-                            { id: 198, title: 'House Robber', difficulty: 'medium', status: 'new' }
-                        ]
-                    },
-                    'grid-dp': {
-                        title: 'Grid DP',
-                        problems: [
-                            { id: 62, title: 'Unique Paths', difficulty: 'medium', status: 'new' },
-                            { id: 64, title: 'Minimum Path Sum', difficulty: 'medium', status: 'new' }
-                        ]
-                    }
-                }
-            },
-            'graph': {
-                title: 'Graph',
-                icon: '🕸️',
-                total: 96,
-                solved: 0,
-                patterns: {
-                    'traversal': {
-                        title: 'Graph Traversal',
-                        problems: [
-                            { id: 200, title: 'Number of Islands', difficulty: 'medium', status: 'new' },
-                            { id: 695, title: 'Max Area of Island', difficulty: 'medium', status: 'new' }
-                        ]
-                    },
-                    'shortest-path': {
-                        title: 'Shortest Path',
-                        problems: [
-                            { id: 743, title: 'Network Delay Time', difficulty: 'medium', status: 'new' },
-                            { id: 787, title: 'Cheapest Flights Within K Stops', difficulty: 'medium', status: 'new' }
-                        ]
-                    }
-                }
-            }
-        };
+        let techniquesData = {};
 
         let currentView = 'detailed';
         let expandedTechniques = new Set();
         let expandedPatterns = new Set();
 
-        function initializeDashboard() {
+        async function loadTechniquesData() {
+            try {
+                const response = await fetch('questions.json');
+                techniquesData = await response.json();
+            } catch (error) {
+                console.error('Error loading techniques data:', error);
+                techniquesData = {}; // Fallback to empty object
+            }
+        }
+
+        function calculateTechniqueStats() {
+            Object.values(techniquesData).forEach(technique => {
+                // Calculate solved count for this technique
+                let solvedCount = 0;
+                let attemptedCount = 0;
+                let totalProblemsInTechnique = 0;
+
+                Object.values(technique.patterns).forEach(pattern => {
+                    pattern.problems.forEach(problem => {
+                        totalProblemsInTechnique++;
+                        if (problem.status === 'solved') {
+                            solvedCount++;
+                        } else if (problem.status === 'attempted') {
+                            attemptedCount++;
+                        }
+                    });
+                });
+
+                // Update the technique object with calculated values
+                technique.solved = solvedCount;
+                technique.attempted = attemptedCount;
+                technique.actualTotal = totalProblemsInTechnique;
+            });
+        }
+
+
+        async function initializeDashboard() {
+            await loadTechniquesData();
             updateStats();
             renderTechniques();
             setupEventListeners();
         }
 
         function updateStats() {
+            // First calculate the stats from the data structure
+            calculateTechniqueStats();
+
             let totalSolved = 0;
+            let totalAttempted = 0;
             let totalPatterns = 0;
-            
+            let actualTotalProblems = 0;
+
             Object.values(techniquesData).forEach(technique => {
                 totalSolved += technique.solved;
+                totalAttempted += technique.attempted || 0;
                 totalPatterns += Object.keys(technique.patterns).length;
+                actualTotalProblems += technique.actualTotal || 0;
             });
 
+            // Update the display
             document.getElementById('totalSolved').textContent = totalSolved;
             document.getElementById('totalPatterns').textContent = totalPatterns;
+
+            // Update total problems to show actual count from data
+            document.getElementById('totalProblems').textContent = actualTotalProblems;
+
+            // Add attempted count if you want to show it
+            const statsContainer = document.getElementById('statsContainer');
+            let attemptedCard = document.getElementById('attemptedCard');
+
+            if (!attemptedCard) {
+                attemptedCard = document.createElement('div');
+                attemptedCard.className = 'stat-card';
+                attemptedCard.id = 'attemptedCard';
+                attemptedCard.innerHTML = `
+            <div class="stat-number" id="totalAttempted">0</div>
+            <div class="stat-label">Problems Attempted</div>
+        `;
+                statsContainer.appendChild(attemptedCard);
+            }
+
+            document.getElementById('totalAttempted').textContent = totalAttempted;
         }
 
         function renderTechniques() {
@@ -666,37 +597,42 @@
 
         function createTechniqueElement(techniqueId, technique) {
             const isExpanded = expandedTechniques.has(techniqueId);
-            
+
             const techniqueDiv = document.createElement('div');
             techniqueDiv.className = `technique-section ${isExpanded ? 'expanded' : ''}`;
             techniqueDiv.dataset.technique = techniqueId;
 
-            const solvedCount = technique.solved;
-            const totalCount = technique.total;
-            const solvedPercentage = Math.round((solvedCount / totalCount) * 100);
+            // Use calculated solved count
+            const solvedCount = technique.solved || 0;
+            const attemptedCount = technique.attempted || 0;
+            const totalCount = technique.actualTotal || technique.total;
+            const solvedPercentage = totalCount > 0 ? Math.round((solvedCount / totalCount) * 100) : 0;
 
             techniqueDiv.innerHTML = `
-                <div class="technique-header" onclick="toggleTechnique('${techniqueId}')">
-                    <div class="technique-title">
-                        <span class="technique-icon">${technique.icon}</span>
-                        ${technique.title}
-                    </div>
-                    <div class="technique-stats">
-                        <div class="stat-item">
-                            <span>✅ ${solvedCount}/${totalCount}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span>${solvedPercentage}%</span>
-                        </div>
-                        <span class="expand-icon">▼</span>
-                    </div>
+        <div class="technique-header" onclick="toggleTechnique('${techniqueId}')">
+            <div class="technique-title">
+                <span class="technique-icon">${technique.icon}</span>
+                ${technique.title}
+            </div>
+            <div class="technique-stats">
+                <div class="stat-item">
+                    <span>✅ ${solvedCount}</span>
                 </div>
-                <div class="patterns-container">
-                    ${Object.entries(technique.patterns).map(([patternId, pattern]) => 
-                        createPatternElement(techniqueId, patternId, pattern)
-                    ).join('')}
+                <div class="stat-item">
+                    <span>⚠️ ${attemptedCount}</span>
                 </div>
-            `;
+                <div class="stat-item">
+                    <span>${solvedCount}/${totalCount} (${solvedPercentage}%)</span>
+                </div>
+                <span class="expand-icon">▼</span>
+            </div>
+        </div>
+        <div class="patterns-container">
+            ${Object.entries(technique.patterns).map(([patternId, pattern]) =>
+                createPatternElement(techniqueId, patternId, pattern)
+            ).join('')}
+        </div>
+    `;
 
             return techniqueDiv;
         }
@@ -750,7 +686,7 @@
                 expandedTechniques.delete(techniqueId);
                 const element = document.querySelector(`[data-technique="${techniqueId}"]`);
                 element.classList.remove('expanded');
-                
+
                 // Close all patterns within this technique
                 const techniquePatterns = Array.from(expandedPatterns).filter(pattern => pattern.startsWith(techniqueId + '-'));
                 techniquePatterns.forEach(pattern => {
@@ -770,7 +706,7 @@
                         }
                     }
                 });
-                
+
                 // Close all patterns from other techniques
                 const otherTechniquePatterns = Array.from(expandedPatterns).filter(pattern => !pattern.startsWith(techniqueId + '-'));
                 otherTechniquePatterns.forEach(pattern => {
@@ -780,11 +716,11 @@
                     }
                 });
                 expandedPatterns = new Set(Array.from(expandedPatterns).filter(pattern => pattern.startsWith(techniqueId + '-')));
-                
+
                 // Clear the techniques set and add only the current one
                 expandedTechniques.clear();
                 expandedTechniques.add(techniqueId);
-                
+
                 // Expand the current technique
                 const element = document.querySelector(`[data-technique="${techniqueId}"]`);
                 element.classList.add('expanded');
@@ -793,7 +729,7 @@
 
         function togglePattern(patternKey) {
             const techniqueId = patternKey.split('-')[0];
-            
+
             if (expandedPatterns.has(patternKey)) {
                 // If clicking on already expanded pattern, just close it
                 expandedPatterns.delete(patternKey);
@@ -801,7 +737,7 @@
                 element.classList.remove('expanded');
             } else {
                 // Close all other patterns within the same technique
-                const sameTechniquePatterns = Array.from(expandedPatterns).filter(pattern => 
+                const sameTechniquePatterns = Array.from(expandedPatterns).filter(pattern =>
                     pattern.startsWith(techniqueId + '-') && pattern !== patternKey
                 );
                 sameTechniquePatterns.forEach(pattern => {
@@ -811,7 +747,7 @@
                         patternElement.classList.remove('expanded');
                     }
                 });
-                
+
                 // Expand the current pattern
                 expandedPatterns.add(patternKey);
                 const element = document.querySelector(`[data-pattern="${patternKey}"]`);
@@ -850,29 +786,29 @@
 
         function filterContent(searchTerm) {
             const techniques = document.querySelectorAll('.technique-section');
-            
+
             techniques.forEach(technique => {
                 let hasVisibleContent = false;
                 const patterns = technique.querySelectorAll('.pattern-section');
-                
+
                 patterns.forEach(pattern => {
                     let hasVisibleProblems = false;
                     const problems = pattern.querySelectorAll('.problem-card');
-                    
+
                     problems.forEach(problem => {
                         const title = problem.querySelector('.problem-title').textContent.toLowerCase();
                         const number = problem.querySelector('.problem-number').textContent.toLowerCase();
-                        
+
                         const isVisible = title.includes(searchTerm) || number.includes(searchTerm) || searchTerm === '';
                         problem.style.display = isVisible ? 'flex' : 'none';
-                        
+
                         if (isVisible) hasVisibleProblems = true;
                     });
-                    
+
                     pattern.style.display = hasVisibleProblems ? 'block' : 'none';
                     if (hasVisibleProblems) hasVisibleContent = true;
                 });
-                
+
                 technique.style.display = hasVisibleContent ? 'block' : 'none';
             });
         }
@@ -880,16 +816,16 @@
         function applyFilters() {
             const difficultyFilter = document.getElementById('difficultyFilter').value;
             const statusFilter = document.getElementById('statusFilter').value;
-            
+
             const problems = document.querySelectorAll('.problem-card');
-            
+
             problems.forEach(problem => {
                 const difficulty = problem.dataset.difficulty;
                 const status = problem.dataset.status;
-                
+
                 const matchesDifficulty = !difficultyFilter || difficulty === difficultyFilter;
                 const matchesStatus = !statusFilter || status === statusFilter;
-                
+
                 problem.style.display = (matchesDifficulty && matchesStatus) ? 'flex' : 'none';
             });
         }
@@ -905,4 +841,5 @@
         }, 1000);
     </script>
 </body>
+
 </html>
