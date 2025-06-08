@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shortest Distance to Character Algorithm Visualizer</title>
+    <style>
+        body {
+            font-family: 'Consolas', 'Monaco', monospace;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        input {
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            margin-right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        #inputString {
+            width: 200px;
+        }
+
+        #targetChar {
+            width: 50px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .phase {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border-left: 5px solid #ff6b6b;
+        }
+
+        .phase-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #ffdd59;
+        }
+
+        .array-container {
+            margin: 20px 0;
+        }
+
+        .array-label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #4ecdc4;
+            font-size: 1.1em;
+        }
+
+        .char-array {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+
+        .char {
+            width: 50px;
+            height: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        .char-letter {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .char-distance {
+            font-size: 10px;
+            color: #ffdd59;
+            margin-top: 2px;
+        }
+
+        .char.target {
+            background: rgba(255, 107, 107, 0.8);
+            border-color: #ff6b6b;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+        }
+
+        .char.active {
+            background: #4ecdc4;
+            border-color: #4ecdc4;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.6);
+        }
+
+        .char.pointer {
+            border-color: #ffdd59;
+            background: rgba(255, 221, 89, 0.3);
+            border-width: 3px;
+        }
+
+        .distance-array {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+
+        .distance-cell {
+            width: 50px;
+            height: 35px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .distance-cell.active {
+            background: #4ecdc4;
+            border-color: #4ecdc4;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.6);
+        }
+
+        .distance-cell.infinity {
+            color: #ff6b6b;
+            font-size: 12px;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .step-info {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .result {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4ecdc4;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .leetcode-info {
+            text-align: center;
+            margin: -10px 0 30px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .leetcode-number {
+            background: linear-gradient(45deg, #ffa726, #ff7043);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(255, 167, 38, 0.3);
+        }
+
+        .leetcode-link {
+            color: #4ecdc4;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 8px 16px;
+            border: 2px solid #4ecdc4;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .leetcode-link:hover {
+            background: #4ecdc4;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.4);
+        }
+
+        .approach-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border-left: 5px solid #4ecdc4;
+        }
+
+        .approach-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .step-approach {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 3px solid #ffdd59;
+        }
+
+        .step-approach strong {
+            color: #4ecdc4;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .step-approach p {
+            margin: 0;
+            line-height: 1.6;
+            color: #e8e8e8;
+        }
+
+        .step-approach code {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #ffdd59;
+            font-size: 0.9em;
+        }
+
+        .code-section {
+            margin-top: 40px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .code-container {
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            overflow-x: auto;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+        }
+
+        .code-block {
+            margin: 0;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #d4d4d4;
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+        }
+
+        .code-block code {
+            display: block;
+            white-space: pre;
+            color: #d4d4d4;
+        }
+
+        .direction-indicator {
+            text-align: center;
+            margin: 10px 0;
+            font-weight: bold;
+            color: #ffdd59;
+            font-size: 1.1em;
+        }
+
+        .counter-info {
+            text-align: center;
+            margin: 10px 0;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📏 Shortest Distance to Character</h1>
+        <div class="leetcode-info">
+            <span class="leetcode-number">LeetCode #821</span>
+            <a href="https://leetcode.com/problems/shortest-distance-to-a-character/" target="_blank" class="leetcode-link">
+                Shortest Distance to a Character ↗
+            </a>
+        </div>
+        
+        <div class="approach-section">
+            <h2 style="color: #ffdd59; margin-bottom: 15px;">💡 My Approach</h2>
+            <div class="approach-content">
+                <div class="step-approach">
+                    <strong>Step 1: Initialize arrays</strong>
+                    <p>Create <code>leftDis</code> and <code>rightDis</code> arrays filled with <code>Integer.MAX_VALUE</code> to track distances from left and right directions.</p>
+                </div>
+                
+                <div class="step-approach">
+                    <strong>Step 2: Left to Right pass</strong>
+                    <p>Traverse from left to right. When we find target character <code>c</code>, reset counter to 0. Otherwise, increment counter and store distance in <code>leftDis</code>.</p>
+                </div>
+                
+                <div class="step-approach">
+                    <strong>Step 3: Right to Left pass</strong>
+                    <p>Traverse from right to left. When we find target character <code>c</code>, reset counter to 0. Otherwise, increment counter and store distance in <code>rightDis</code>.</p>
+                </div>
+
+                <div class="step-approach">
+                    <strong>Step 4: Take minimum</strong>
+                    <p>For each position, take the minimum of <code>leftDis[i]</code> and <code>rightDis[i]</code> to get the shortest distance to target character.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-section">
+            <input type="text" id="inputString" placeholder="Enter string (e.g., 'loveleetcode')" value="loveleetcode">
+            <input type="text" id="targetChar" placeholder="Target char (e.g., 'e')" value="e" maxlength="1">
+            <button onclick="startVisualization()">Visualize</button>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box" style="background: rgba(255, 107, 107, 0.8); border-color: #ff6b6b;"></div>
+                <span>Target Character</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: #4ecdc4; border-color: #4ecdc4;"></div>
+                <span>Current Position</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: rgba(255, 221, 89, 0.3); border-color: #ffdd59;"></div>
+                <span>Pointer Position</span>
+            </div>
+        </div>
+
+        <div id="visualization"></div>
+
+        <div class="controls">
+            <button id="prevBtn" onclick="previousStep()" disabled>← Previous</button>
+            <button id="nextBtn" onclick="nextStep()">Next →</button>
+            <button onclick="autoPlay()" id="autoBtn">Auto Play</button>
+            <button onclick="reset()">Reset</button>
+        </div>
+
+        <div class="code-section">
+            <h2 style="color: #ffdd59; margin-bottom: 20px; text-align: center;">📝 Source Code</h2>
+            <div class="code-container">
+                <pre class="code-block"><code>class Solution {
+    public int[] shortestToChar(String s, char c) {
+        int[] leftDis = new int[s.length()];
+        int[] rightDis = new int[s.length()];
+
+        Arrays.fill(leftDis, Integer.MAX_VALUE);
+        Arrays.fill(rightDis, Integer.MAX_VALUE);
+
+        int counter = Integer.MAX_VALUE;
+
+        //Left to Right Direction
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == c) {
+                counter = 0;
+                leftDis[i] = counter;
+            } else {
+                if (counter != Integer.MAX_VALUE) {
+                    counter++;
+                    leftDis[i] = counter;
+                }
+            }
+        }
+
+        //Right to left direction
+        counter = Integer.MAX_VALUE;
+        for (int i = s.length() - 1; i >= 0; i--) {
+            if (s.charAt(i) == c) {
+                counter = 0;
+                rightDis[i] = counter;
+            } else {
+                if (counter != Integer.MAX_VALUE) {
+                    counter++;
+                    rightDis[i] = counter;
+                }
+            }
+        }
+
+        int[] res = new int[s.length()];
+        for (int i = 0; i < s.length(); i++) {
+            if (leftDis[i] <= rightDis[i])
+                res[i] = leftDis[i];
+            else
+                res[i] = rightDis[i];
+        }
+
+        return res;
+    }
+}</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        let steps = [];
+        let isAutoPlaying = false;
+        let autoInterval;
+
+        function startVisualization() {
+            const input = document.getElementById('inputString').value || "loveleetcode";
+            const target = document.getElementById('targetChar').value || "e";
+            
+            if (target.length !== 1) {
+                alert("Please enter exactly one character as target");
+                return;
+            }
+            
+            generateSteps(input, target);
+            currentStep = 0;
+            renderStep();
+        }
+
+        function generateSteps(s, c) {
+            steps = [];
+            const n = s.length;
+            const leftDis = new Array(n).fill(Number.MAX_SAFE_INTEGER);
+            const rightDis = new Array(n).fill(Number.MAX_SAFE_INTEGER);
+            
+            // Step 1: Initial state
+            steps.push({
+                phase: "Initialization",
+                string: s,
+                target: c,
+                leftDis: [...leftDis],
+                rightDis: [...rightDis],
+                result: null,
+                description: `Initialize leftDis and rightDis arrays with MAX_VALUE. Looking for character '${c}'`,
+                currentIndex: -1,
+                direction: null,
+                counter: Number.MAX_SAFE_INTEGER
+            });
+
+            // Phase 1: Left to Right
+            let counter = Number.MAX_SAFE_INTEGER;
+            for (let i = 0; i < n; i++) {
+                if (s.charAt(i) === c) {
+                    counter = 0;
+                    leftDis[i] = counter;
+                    steps.push({
+                        phase: "Left to Right Pass",
+                        string: s,
+                        target: c,
+                        leftDis: [...leftDis],
+                        rightDis: [...rightDis],
+                        result: null,
+                        description: `Found target character '${c}' at position ${i}. Reset counter to 0.`,
+                        currentIndex: i,
+                        direction: "left-to-right",
+                        counter: counter
+                    });
+                } else {
+                    if (counter !== Number.MAX_SAFE_INTEGER) {
+                        counter++;
+                        leftDis[i] = counter;
+                    }
+                    steps.push({
+                        phase: "Left to Right Pass",
+                        string: s,
+                        target: c,
+                        leftDis: [...leftDis],
+                        rightDis: [...rightDis],
+                        result: null,
+                        description: counter === Number.MAX_SAFE_INTEGER ? 
+                            `Character '${s.charAt(i)}' at position ${i}. No target found yet, keep MAX_VALUE.` :
+                            `Character '${s.charAt(i)}' at position ${i}. Distance from nearest '${c}' is ${counter}.`,
+                        currentIndex: i,
+                        direction: "left-to-right",
+                        counter: counter
+                    });
+                }
+            }
+
+            steps.push({
+                phase: "Left to Right Complete",
+                string: s,
+                target: c,
+                leftDis: [...leftDis],
+                rightDis: [...rightDis],
+                result: null,
+                description: "Left to right pass complete! Now processing right to left...",
+                currentIndex: -1,
+                direction: null,
+                counter: 0
+            });
+
+            // Phase 2: Right to Left
+            counter = Number.MAX_SAFE_INTEGER;
+            for (let i = n - 1; i >= 0; i--) {
+                if (s.charAt(i) === c) {
+                    counter = 0;
+                    rightDis[i] = counter;
+                    steps.push({
+                        phase: "Right to Left Pass",
+                        string: s,
+                        target: c,
+                        leftDis: [...leftDis],
+                        rightDis: [...rightDis],
+                        result: null,
+                        description: `Found target character '${c}' at position ${i}. Reset counter to 0.`,
+                        currentIndex: i,
+                        direction: "right-to-left",
+                        counter: counter
+                    });
+                } else {
+                    if (counter !== Number.MAX_SAFE_INTEGER) {
+                        counter++;
+                        rightDis[i] = counter;
+                    }
+                    steps.push({
+                        phase: "Right to Left Pass",
+                        string: s,
+                        target: c,
+                        leftDis: [...leftDis],
+                        rightDis: [...rightDis],
+                        result: null,
+                        description: counter === Number.MAX_SAFE_INTEGER ? 
+                            `Character '${s.charAt(i)}' at position ${i}. No target found yet, keep MAX_VALUE.` :
+                            `Character '${s.charAt(i)}' at position ${i}. Distance from nearest '${c}' is ${counter}.`,
+                        currentIndex: i,
+                        direction: "right-to-left",
+                        counter: counter
+                    });
+                }
+            }
+
+            steps.push({
+                phase: "Right to Left Complete",
+                string: s,
+                target: c,
+                leftDis: [...leftDis],
+                rightDis: [...rightDis],
+                result: null,
+                description: "Right to left pass complete! Now taking minimum distances...",
+                currentIndex: -1,
+                direction: null,
+                counter: 0
+            });
+
+            // Phase 3: Take minimum
+            const result = new Array(n);
+            for (let i = 0; i < n; i++) {
+                result[i] = Math.min(leftDis[i], rightDis[i]);
+                steps.push({
+                    phase: "Taking Minimum",
+                    string: s,
+                    target: c,
+                    leftDis: [...leftDis],
+                    rightDis: [...rightDis],
+                    result: [...result],
+                    description: `Position ${i}: min(leftDis[${i}]=${leftDis[i] === Number.MAX_SAFE_INTEGER ? 'MAX' : leftDis[i]}, rightDis[${i}]=${rightDis[i] === Number.MAX_SAFE_INTEGER ? 'MAX' : rightDis[i]}) = ${result[i]}`,
+                    currentIndex: i,
+                    direction: "result",
+                    counter: 0
+                });
+            }
+
+            // Final result
+            steps.push({
+                phase: "Complete",
+                string: s,
+                target: c,
+                leftDis: [...leftDis],
+                rightDis: [...rightDis],
+                result: [...result],
+                description: `Algorithm complete! Final result: [${result.join(', ')}]`,
+                currentIndex: -1,
+                direction: null,
+                counter: 0
+            });
+        }
+
+        function renderStep() {
+            if (steps.length === 0) return;
+            
+            const step = steps[currentStep];
+            const viz = document.getElementById('visualization');
+            
+            let html = `
+                <div class="phase">
+                    <div class="phase-title">${step.phase}</div>
+                    
+                    <div class="array-container">
+                        <div class="array-label">String Characters:</div>
+                        <div class="char-array">
+                            ${step.string.split('').map((char, index) => {
+                                let classes = ['char'];
+                                if (char === step.target) classes.push('target');
+                                if (step.currentIndex === index) classes.push('pointer');
+                                return `<div class="${classes.join(' ')}">
+                                    <div class="char-letter">${char}</div>
+                                    <div class="char-distance">${index}</div>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+            `;
+
+            if (step.direction) {
+                html += `<div class="direction-indicator">
+                    ${step.direction === 'left-to-right' ? '→ Left to Right →' : 
+                      step.direction === 'right-to-left' ? '← Right to Left ←' : 
+                      'Taking Minimum'}
+                </div>`;
+                
+                if (step.counter !== undefined && step.counter !== 0) {
+                    html += `<div class="counter-info">Counter: ${step.counter === Number.MAX_SAFE_INTEGER ? 'MAX_VALUE' : step.counter}</div>`;
+                }
+            }
+
+            html += `
+                    <div class="array-container">
+                        <div class="array-label">Left Distances:</div>
+                        <div class="distance-array">
+                            ${step.leftDis.map((dist, index) => {
+                                let classes = ['distance-cell'];
+                                if (dist === Number.MAX_SAFE_INTEGER) classes.push('infinity');
+                                if (step.currentIndex === index && (step.direction === 'left-to-right' || step.direction === 'result')) classes.push('active');
+                                return `<div class="${classes.join(' ')}">${dist === Number.MAX_SAFE_INTEGER ? '∞' : dist}</div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <div class="array-container">
+                        <div class="array-label">Right Distances:</div>
+                        <div class="distance-array">
+                            ${step.rightDis.map((dist, index) => {
+                                let classes = ['distance-cell'];
+                                if (dist === Number.MAX_SAFE_INTEGER) classes.push('infinity');
+                                if (step.currentIndex === index && (step.direction === 'right-to-left' || step.direction === 'result')) classes.push('active');
+                                return `<div class="${classes.join(' ')}">${dist === Number.MAX_SAFE_INTEGER ? '∞' : dist}</div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+            `;
+
+            if (step.result) {
+                html += `
+                    <div class="array-container">
+                        <div class="array-label">Final Result:</div>
+                        <div class="distance-array">
+                            ${step.result.map((dist, index) => {
+                                let classes = ['distance-cell'];
+                                if (step.currentIndex === index) classes.push('active');
+                                return `<div class="${classes.join(' ')}">${dist}</div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += `
+                    <div class="step-info">${step.description}</div>
+                    ${step.phase === 'Complete' ? `<div class="result">Final Answer: [${step.result.join(', ')}]</div>` : ''}
+                </div>
+            `;
+            
+            viz.innerHTML = html;
+            
+            // Update button states
+            document.getElementById('prevBtn').disabled = currentStep === 0;
+            document.getElementById('nextBtn').disabled = currentStep === steps.length - 1;
+        }
+
+        function nextStep() {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                renderStep();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                renderStep();
+            }
+        }
+
+        function autoPlay() {
+            const btn = document.getElementById('autoBtn');
+            if (isAutoPlaying) {
+                clearInterval(autoInterval);
+                isAutoPlaying = false;
+                btn.textContent = 'Auto Play';
+            } else {
+                isAutoPlaying = true;
+                btn.textContent = 'Stop';
+                autoInterval = setInterval(() => {
+                    if (currentStep < steps.length - 1) {
+                        nextStep();
+                    } else {
+                        clearInterval(autoInterval);
+                        isAutoPlaying = false;
+                        btn.textContent = 'Auto Play';
+                    }
+                }, 1500);
+            }
+        }
+
+        function reset() {
+            currentStep = 0;
+            if (isAutoPlaying) {
+                clearInterval(autoInterval);
+                isAutoPlaying = false;
+                document.getElementById('autoBtn').textContent = 'Auto Play';
+            }
+            renderStep();
+        }
+
+        // Initialize with default example
+        startVisualization();
+    </script>
+</body>
+</html>

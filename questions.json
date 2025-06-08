@@ -26,8 +26,44 @@
                         "title": "Bag of Tokens",
                         "difficulty": "medium",
                         "status": "solved",
-                        "url": "Two_Pointers/ReverseWordsinaStringIII.html"
+                        "url": "Two_Pointers/BagOfTokens.html"
+                    },
+                    {
+                        "id": 942,
+                        "title": "DI String Match",
+                        "difficulty": "easy",
+                        "status": "solved",
+                        "url": "Two_Pointers/DIStringMatch.html"
+                    },
+                    {
+                        "id": 1750,
+                        "title": "Minimum Length of String After Deleting Similar Ends",
+                        "difficulty": "medium",
+                        "status": "solved",
+                        "url": "Two_Pointers/MinimumLengthofStringAfterDeletingSimilarEnds.html"
+                    },
+                    {
+                        "id": 1813,
+                        "title": "Sentence Similarity III",
+                        "difficulty": "medium",
+                        "status": "solved",
+                        "url": "Two_Pointers/SentenceSimilarityIII.html"
+                    },
+                    {
+                        "id": 658,
+                        "title": "Find K Closest Elements",
+                        "difficulty": "medium",
+                        "status": "solved",
+                        "url": "Two_Pointers/FindKClosestElements.html"
+                    },
+                    {
+                        "id": 821,
+                        "title": "Shortest Distance to a Character",
+                        "difficulty": "easy",
+                        "status": "solved",
+                        "url": "Two_Pointers/ShortestDistanceToACharacter.html"
                     }
+
                 ]
             },
             "slow-fast": {

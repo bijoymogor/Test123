@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bag of Tokens Algorithm Visualizer</title>
+    <style>
+        body {
+            font-family: 'Consolas', 'Monaco', monospace;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        input {
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        #tokensInput {
+            width: 300px;
+        }
+
+        #powerInput {
+            width: 150px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .phase {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border-left: 5px solid #ff6b6b;
+        }
+
+        .phase-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #ffdd59;
+        }
+
+        .token-array {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+            justify-content: center;
+        }
+
+        .token {
+            min-width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            font-size: 16px;
+            padding: 0 8px;
+            position: relative;
+        }
+
+        .token.left-pointer {
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.3);
+            box-shadow: 0 0 15px rgba(78, 205, 196, 0.5);
+        }
+
+        .token.right-pointer {
+            border-color: #ffdd59;
+            background: rgba(255, 221, 89, 0.3);
+            box-shadow: 0 0 15px rgba(255, 221, 89, 0.5);
+        }
+
+        .token.active {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.4);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+        }
+
+        .token.used {
+            opacity: 0.3;
+            background: rgba(100, 100, 100, 0.2);
+            border-color: rgba(100, 100, 100, 0.3);
+            transform: scale(0.9);
+        }
+
+        .pointer-label {
+            position: absolute;
+            top: -30px;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .pointer-label.left {
+            background: #4ecdc4;
+        }
+
+        .pointer-label.right {
+            background: #ffdd59;
+            color: #333;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 25px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #ccc;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .stat.power .stat-value {
+            color: #4ecdc4;
+        }
+
+        .stat.score .stat-value {
+            color: #ffdd59;
+        }
+
+        .stat.max-score .stat-value {
+            color: #ff6b6b;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .step-info {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .result {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #4ecdc4;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border: 2px solid #4ecdc4;
+        }
+
+        .leetcode-info {
+            text-align: center;
+            margin: -10px 0 30px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .leetcode-number {
+            background: linear-gradient(45deg, #ffa726, #ff7043);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 2px 8px rgba(255, 167, 38, 0.3);
+        }
+
+        .leetcode-link {
+            color: #4ecdc4;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 8px 16px;
+            border: 2px solid #4ecdc4;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .leetcode-link:hover {
+            background: #4ecdc4;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(78, 205, 196, 0.4);
+        }
+
+        .approach-section {
+            margin: 30px 0;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border-left: 5px solid #4ecdc4;
+        }
+
+        .approach-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .step-approach {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 3px solid #ffdd59;
+        }
+
+        .step-approach strong {
+            color: #4ecdc4;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .step-approach p {
+            margin: 0;
+            line-height: 1.6;
+            color: #e8e8e8;
+        }
+
+        .step-approach code {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #ffdd59;
+            font-size: 0.9em;
+        }
+
+        .code-section {
+            margin-top: 40px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .code-container {
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            overflow-x: auto;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+        }
+
+        .code-block {
+            margin: 0;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #d4d4d4;
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+        }
+
+        .code-block code {
+            display: block;
+            white-space: pre;
+            color: #d4d4d4;
+        }
+
+        .decision-box {
+            background: rgba(255, 221, 89, 0.2);
+            border: 2px solid #ffdd59;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 10px 0;
+            color: #ffdd59;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .action-box {
+            background: rgba(78, 205, 196, 0.2);
+            border: 2px solid #4ecdc4;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 10px 0;
+            color: #4ecdc4;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Bag of Tokens Algorithm</h1>
+        <div class="leetcode-info">
+            <span class="leetcode-number">LeetCode #948</span>
+            <a href="https://leetcode.com/problems/bag-of-tokens/description/" target="_blank" class="leetcode-link">
+                Bag of Tokens ↗
+            </a>
+        </div>
+        
+        <div class="approach-section">
+            <h2 style="color: #ffdd59; margin-bottom: 15px;">💡 Greedy Two-Pointer Approach</h2>
+            <div class="approach-content">
+                <div class="step-approach">
+                    <strong>Step 1: Sort the tokens array</strong>
+                    <p>Sort tokens in ascending order to have smallest tokens at the beginning and largest at the end.</p>
+                </div>
+                
+                <div class="step-approach">
+                    <strong>Step 2: Use two pointers (left and right)</strong>
+                    <p>Place <code>left</code> pointer at start and <code>right</code> pointer at end. This allows us to choose the smallest token to gain score or largest token to gain power.</p>
+                </div>
+                
+                <div class="step-approach">
+                    <strong>Step 3: Greedy decision making</strong>
+                    <p>If we have enough power for the smallest token (<code>power >= tokens[left]</code>), spend power to gain score. Otherwise, if we have score > 0, spend score to gain power from the largest token. If neither is possible, break.</p>
+                </div>
+                
+                <div class="step-approach">
+                    <strong>Step 4: Track maximum score</strong>
+                    <p>Keep updating <code>maxScore</code> whenever we gain score, as we might need to spend score later to gain more power.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-section">
+            <div class="input-row">
+                <input type="text" id="tokensInput" placeholder="Enter tokens (e.g., '100,200,300,400')" value="100,200,300,400">
+                <input type="number" id="powerInput" placeholder="Initial power" value="200" min="0">
+            </div>
+            <button onclick="startVisualization()">Visualize Algorithm</button>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box" style="background: rgba(78, 205, 196, 0.3); border-color: #4ecdc4;"></div>
+                <span>Left Pointer (Smallest)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: rgba(255, 221, 89, 0.3); border-color: #ffdd59;"></div>
+                <span>Right Pointer (Largest)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: rgba(255, 107, 107, 0.4); border-color: #ff6b6b;"></div>
+                <span>Active Token</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: rgba(100, 100, 100, 0.2); border-color: rgba(100, 100, 100, 0.3);"></div>
+                <span>Used Token</span>
+            </div>
+        </div>
+
+        <div id="visualization"></div>
+
+        <div class="controls">
+            <button id="prevBtn" onclick="previousStep()" disabled>← Previous</button>
+            <button id="nextBtn" onclick="nextStep()">Next →</button>
+            <button onclick="autoPlay()" id="autoBtn">Auto Play</button>
+            <button onclick="reset()">Reset</button>
+        </div>
+
+        <div class="code-section">
+            <h2 style="color: #ffdd59; margin-bottom: 20px; text-align: center;">📝 Source Code</h2>
+            <div class="code-container">
+                <pre class="code-block"><code>class Solution {
+    public int bagOfTokensScore(int[] tokens, int power) {
+        Arrays.sort(tokens);
+
+        int l = 0, r = tokens.length - 1;
+        int score = 0, maxScore = 0;
+
+        while (l <= r) {
+            if (power >= tokens[l]) {
+                power = power - tokens[l];
+                score++;
+                maxScore = Math.max(score, maxScore);
+                l++;
+            } else if (score > 0) {
+                score--;
+                power = power + tokens[r];
+                r--;
+            } else
+                break;
+        }
+        return maxScore;
+    }
+}</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        let steps = [];
+        let isAutoPlaying = false;
+        let autoInterval;
+
+        function startVisualization() {
+            const tokensInput = document.getElementById('tokensInput').value || "100,200,300,400";
+            const powerInput = parseInt(document.getElementById('powerInput').value) || 200;
+            
+            const tokens = tokensInput.split(',').map(x => parseInt(x.trim())).filter(x => !isNaN(x));
+            generateSteps(tokens, powerInput);
+            currentStep = 0;
+            renderStep();
+        }
+
+        function generateSteps(inputTokens, initialPower) {
+            steps = [];
+            const tokens = [...inputTokens];
+            
+            // Step 1: Initial state
+            steps.push({
+                phase: "Initial State",
+                tokens: [...tokens],
+                power: initialPower,
+                score: 0,
+                maxScore: 0,
+                left: null,
+                right: null,
+                description: `Starting with tokens: [${tokens.join(', ')}] and power: ${initialPower}`,
+                usedTokens: new Set()
+            });
+
+            // Step 2: Sort tokens
+            tokens.sort((a, b) => a - b);
+            steps.push({
+                phase: "Step 1: Sort Tokens",
+                tokens: [...tokens],
+                power: initialPower,
+                score: 0,
+                maxScore: 0,
+                left: null,
+                right: null,
+                description: `Sorted tokens in ascending order: [${tokens.join(', ')}]`,
+                usedTokens: new Set()
+            });
+
+            // Initialize pointers
+            let l = 0, r = tokens.length - 1;
+            let power = initialPower;
+            let score = 0, maxScore = 0;
+            const usedTokens = new Set();
+
+            steps.push({
+                phase: "Step 2: Initialize Pointers",
+                tokens: [...tokens],
+                power: power,
+                score: score,
+                maxScore: maxScore,
+                left: l,
+                right: r,
+                description: `Initialize left pointer at index ${l} (token ${tokens[l]}) and right pointer at index ${r} (token ${tokens[r]})`,
+                usedTokens: new Set(usedTokens)
+            });
+
+            // Main algorithm loop
+            let stepCount = 3;
+            while (l <= r) {
+                if (power >= tokens[l]) {
+                    // Can afford the smallest token - gain score
+                    steps.push({
+                        phase: `Step ${stepCount}: Check Condition`,
+                        tokens: [...tokens],
+                        power: power,
+                        score: score,
+                        maxScore: maxScore,
+                        left: l,
+                        right: r,
+                        activeToken: l,
+                        description: `Power (${power}) >= tokens[${l}] (${tokens[l]}) ✓ - We can spend power to gain score`,
+                        decision: `Spend ${tokens[l]} power to gain 1 score`,
+                        usedTokens: new Set(usedTokens)
+                    });
+
+                    power -= tokens[l];
+                    score++;
+                    maxScore = Math.max(score, maxScore);
+                    usedTokens.add(l);
+                    
+                    steps.push({
+                        phase: `Step ${stepCount}: Gain Score`,
+                        tokens: [...tokens],
+                        power: power,
+                        score: score,
+                        maxScore: maxScore,
+                        left: l,
+                        right: r,
+                        activeToken: l,
+                        description: `Spent ${tokens[l]} power, gained 1 score. Power: ${power}, Score: ${score}, Max Score: ${maxScore}`,
+                        action: `Power: ${power + tokens[l]} → ${power}, Score: ${score - 1} → ${score}`,
+                        usedTokens: new Set(usedTokens)
+                    });
+                    
+                    l++;
+                    
+                    if (l <= r) {
+                        steps.push({
+                            phase: `Step ${stepCount}: Move Left Pointer`,
+                            tokens: [...tokens],
+                            power: power,
+                            score: score,
+                            maxScore: maxScore,
+                            left: l,
+                            right: r,
+                            description: `Move left pointer to index ${l}${l < tokens.length ? ` (token ${tokens[l]})` : ' (end of array)'}`,
+                            usedTokens: new Set(usedTokens)
+                        });
+                    }
+                } else if (score > 0) {
+                    // Can't afford smallest token but have score - spend score for power
+                    steps.push({
+                        phase: `Step ${stepCount}: Check Condition`,
+                        tokens: [...tokens],
+                        power: power,
+                        score: score,
+                        maxScore: maxScore,
+                        left: l,
+                        right: r,
+                        activeToken: r,
+                        description: `Power (${power}) < tokens[${l}] (${tokens[l]}) ✗, but Score (${score}) > 0 ✓ - Spend score to gain power`,
+                        decision: `Spend 1 score to gain ${tokens[r]} power`,
+                        usedTokens: new Set(usedTokens)
+                    });
+
+                    score--;
+                    power += tokens[r];
+                    usedTokens.add(r);
+                    
+                    steps.push({
+                        phase: `Step ${stepCount}: Gain Power`,
+                        tokens: [...tokens],
+                        power: power,
+                        score: score,
+                        maxScore: maxScore,
+                        left: l,
+                        right: r,
+                        activeToken: r,
+                        description: `Spent 1 score, gained ${tokens[r]} power. Power: ${power}, Score: ${score}, Max Score: ${maxScore}`,
+                        action: `Score: ${score + 1} → ${score}, Power: ${power - tokens[r]} → ${power}`,
+                        usedTokens: new Set(usedTokens)
+                    });
+                    
+                    r--;
+                    
+                    if (l <= r) {
+                        steps.push({
+                            phase: `Step ${stepCount}: Move Right Pointer`,
+                            tokens: [...tokens],
+                            power: power,
+                            score: score,
+                            maxScore: maxScore,
+                            left: l,
+                            right: r,
+                            description: `Move right pointer to index ${r}${r >= 0 ? ` (token ${tokens[r]})` : ' (before start of array)'}`,
+                            usedTokens: new Set(usedTokens)
+                        });
+                    }
+                } else {
+                    // Can't afford smallest token and no score to spend
+                    steps.push({
+                        phase: `Step ${stepCount}: Check Condition`,
+                        tokens: [...tokens],
+                        power: power,
+                        score: score,
+                        maxScore: maxScore,
+                        left: l,
+                        right: r,
+                        description: `Power (${power}) < tokens[${l}] (${tokens[l]}) ✗ and Score (${score}) = 0 ✗ - Cannot proceed further`,
+                        decision: "Break - No valid moves available",
+                        usedTokens: new Set(usedTokens)
+                    });
+                    break;
+                }
+                stepCount++;
+            }
+
+            // Final result
+            steps.push({
+                phase: "Algorithm Complete",
+                tokens: [...tokens],
+                power: power,
+                score: score,
+                maxScore: maxScore,
+                left: l > tokens.length - 1 ? null : l,
+                right: r < 0 ? null : r,
+                description: `Algorithm finished! Maximum score achieved: ${maxScore}`,
+                result: maxScore,
+                usedTokens: new Set(usedTokens)
+            });
+        }
+
+        function renderStep() {
+            if (steps.length === 0) return;
+            
+            const step = steps[currentStep];
+            const viz = document.getElementById('visualization');
+            
+            let tokensHTML = step.tokens.map((token, index) => {
+                let classes = ['token'];
+                let label = '';
+                
+                if (step.left === index) {
+                    classes.push('left-pointer');
+                    label = '<div class="pointer-label left">L</div>';
+                }
+                if (step.right === index) {
+                    classes.push('right-pointer');
+                    label = '<div class="pointer-label right">R</div>';
+                }
+                if (step.activeToken === index) {
+                    classes.push('active');
+                }
+                if (step.usedTokens && step.usedTokens.has(index)) {
+                    classes.push('used');
+                }
+                
+                return `<div class="${classes.join(' ')}">${label}${token}</div>`;
+            }).join('');
+
+            let decisionHTML = '';
+            if (step.decision) {
+                decisionHTML = `<div class="decision-box">Decision: ${step.decision}</div>`;
+            }
+
+            let actionHTML = '';
+            if (step.action) {
+                actionHTML = `<div class="action-box">Action: ${step.action}</div>`;
+            }
+            
+            viz.innerHTML = `
+                <div class="phase">
+                    <div class="phase-title">${step.phase}</div>
+                    <div class="token-array">${tokensHTML}</div>
+                    <div class="stats">
+                        <div class="stat power">
+                            <div class="stat-label">Current Power</div>
+                            <div class="stat-value">${step.power}</div>
+                        </div>
+                        <div class="stat score">
+                            <div class="stat-label">Current Score</div>
+                            <div class="stat-value">${step.score}</div>
+                        </div>
+                        <div class="stat max-score">
+                            <div class="stat-label">Max Score</div>
+                            <div class="stat-value">${step.maxScore}</div>
+                        </div>
+                    </div>
+                    ${decisionHTML}
+                    ${actionHTML}
+                    <div class="step-info">${step.description}</div>
+                    ${step.result !== undefined ? `<div class="result">Maximum Score: ${step.result}</div>` : ''}
+                </div>
+            `;
+            
+            // Update button states
+            document.getElementById('prevBtn').disabled = currentStep === 0;
+            document.getElementById('nextBtn').disabled = currentStep === steps.length - 1;
+        }
+
+        function nextStep() {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                renderStep();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                renderStep();
+            }
+        }
+
+        function autoPlay() {
+            const btn = document.getElementById('autoBtn');
+            if (isAutoPlaying) {
+                clearInterval(autoInterval);
+                isAutoPlaying = false;
+                btn.textContent = 'Auto Play';
+            } else {
+                isAutoPlaying = true;
+                btn.textContent = 'Stop';
+                autoInterval = setInterval(() => {
+                    if (currentStep < steps.length - 1) {
+                        nextStep();
+                    } else {
+                        clearInterval(autoInterval);
+                        isAutoPlaying = false;
+                        btn.textContent = 'Auto Play';
+                    }
+                }, 2000);
+            }
+        }
+
+        function reset() {
+            currentStep = 0;
+            if (isAutoPlaying) {
+                clearInterval(autoInterval);
+                isAutoPlaying = false;
+                document.getElementById('autoBtn').textContent = 'Auto Play';
+            }
+            renderStep();
+        }
+
+        // Initialize with default example
+        startVisualization();
+    </script>
+</body>
+</html>
